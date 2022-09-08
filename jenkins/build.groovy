@@ -20,15 +20,11 @@ pipeline{
       bat 'docker build -f Dockerfile -t docker-k8s-app:1.0 .'  
     }
     }
- stage("K8s Version"){
-         steps{
-      bat 'kubectl version'  
-    }
-    }
+ 
 	
 	 stage("Deploy Image->K8s"){
          steps{
-      bat 'kubectl apply -f docker-k8s.yaml'  
+      bat 'kubectl apply -f docker-k8s.yaml --context minikube'  
     }
     }
     }
