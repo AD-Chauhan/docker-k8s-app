@@ -24,7 +24,7 @@ pipeline{
 	
 	 stage("Deploy Image->K8s"){
          steps{
-      bat 'kubectl apply -f docker-k8s.yaml --context minikube'  
+      bat 'kubectl apply -f docker-k8s.yaml'  
     }
     }
     }
