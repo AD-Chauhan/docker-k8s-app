@@ -15,7 +15,7 @@ public class HomeController {
 
 	@GetMapping("/")
 	public String getMessage() {
-		return "Welcome To Docker & K8s : Jai Bajarang Bali";
+		return "Welcome To Docker & K8s : Jai Bajarang Bali ";
 
 	}
 

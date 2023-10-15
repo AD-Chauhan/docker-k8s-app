@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class DockerK8sServiceApplication {
 	public static void main(String[] args) {
+		
 		SpringApplication.run(DockerK8sServiceApplication.class, args);
 	}
 
