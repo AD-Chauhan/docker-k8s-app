@@ -1,30 +1,53 @@
 pipeline{
-    agent any
-    stages{
-    stage("Checkout from GitHub"){
-        steps{
-        git 'https://github.com/AD-Chauhan/docker-k8s-app.git'
-        }
-    }
-    
-    stage("Build With Gradle"){
-         steps{
-       withGradle {
-    bat './gradlew build'
-    }
-         }
-    }
-    
-    stage("Build Docker Image"){
-         steps{
-      bat 'docker build -f Dockerfile -t docker-k8s-app:1.0 .'  
-    }
-    }
+	agent any
+	environment{
+	   dockerImage=''
+	   registry='ad1989/docker-k8s:1'
+	   registryAuth='DockerHubId'
+	   
+	}
+	stages{
+	stage("Checkout from GitHub"){
+		steps{
+		checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/AD-Chauhan/docker-k8s-app.git']])
+		}
+	}
 	
-	 stage("Deploy Image->K8s"){
-         steps{
-      bat 'kubectl apply -f docker-k8s.yaml'  
-    }
-    }
-    }
+	stage("Build With Gradle"){
+		 steps{
+	   withGradle {
+	bat './gradlew build'
+	}
+		 }
+	}
+	
+	 stage("Build Image"){
+		 steps{
+		 script {
+	   dockerImage=docker.build registry
+		}
+	  }
+	}
+	
+	 stage("Push Image in Hub"){
+		 steps{
+		 script {
+	   docker.withRegistry('',registryAuth){
+	   dockerImage.push()
+	   }
+		}
+	  }
+	}
+	
+	  stage('Deploying container to Kubernetes') {
+	  steps {
+		  script {
+			  kubernetesDeploy(configs: "docker-k8s-service.yaml",kubeconfigId: "k8sId")
+			}
+	
+	  }
+	}
+	
+  }
 }
+	
