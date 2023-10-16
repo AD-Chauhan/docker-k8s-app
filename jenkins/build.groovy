@@ -40,12 +40,15 @@ pipeline{
 	}
 	
 	  stage('Deploying container to Kubernetes') {
-	  steps {
+	      steps {
 		  script {
-			  kubernetesDeploy(configs: "docker-k8s-service.yaml",kubeconfigId: "k8sId")
-			}
-	
-	  }
+	       withKubeConfig([credentialsId: 'k8sId']) {
+                 bat 'kubectl delete svc docker-k8s-service'
+			     bat 'kubectl apply -f docker-k8s-service.yaml'
+          }
+		  }
+	      }
+	  
 	}
 	
   }
